@@ -19,14 +19,14 @@ from chirp.drivers import kenwood_live
 from chirp.drivers.kenwood_live import KenwoodLiveRadio, \
     command, iserr, NOCACHE
 
-TS480_SSB_STEPS = [1.0, 2.5, 5.0, 10.0]
+TS480_SSB_STEPS = [0.5, 1.0, 2.5, 5.0, 10.0]
 TS480_FM_STEPS = [5.0, 6.25, 10.0, 12.5, 15.0, 20.0, 25.0, 30.0, 50.0, 100.0]
 TS480_DUPLEX = dict(kenwood_live.DUPLEX)
 TS480_DUPLEX[3] = "="
 TS480_DUPLEX[4] = "split"
 TS480_MODES = ["?", "LSB", "USB", "CW", "FM", "AM",
-               "FSK", "CW-R", "?", "FSK-R"]
-TS480_TMODES = ["", "Tone", "TSQL", "DTCS"]
+               "FSK", "CWR", "?", "FSKR"]
+TS480_TMODES = ["", "Tone", "TSQL"]
 TS480_TONES = list(chirp_common.TONES)
 [TS480_TONES.remove(x) for x in [159.8, 165.5, 171.3, 177.3, 183.5, 189.9,
                                  196.6, 199.5]]
@@ -53,12 +53,8 @@ class TS480Radio(KenwoodLiveRadio):
         rf.valid_skips = ["", "S"]
         rf.valid_duplexes = TS480_DUPLEX.values()
 
-        # TS-480 uses ";" as a message separator even though it seems to
-        # allow you to to use all printable ASCII characters at the manual
-        # controls.  The radio doesn't send the name after the ";" if you
-        # input one from the manual controls.
-        rf.valid_characters = chirp_common.CHARSET_ASCII.replace(';', '')
-        rf.valid_name_length = 7    # 7 character channel names
+        rf.valid_characters = chirp_common.CHARSET_UPPER_NUMERIC + '*+-/'
+        rf.valid_name_length = 8    # 8 character channel names
         rf.memory_bounds = (0, self._upper)
         return rf
 
